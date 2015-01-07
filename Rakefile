@@ -31,7 +31,7 @@ namespace :ci do
   desc 'install required tools'
   task :setup do
     begin
-      run_command 'which sass > /dev/null'
+      run_command 'which sass >& /dev/null'
     rescue
       run_command 'sudo gem install sass'
     end
