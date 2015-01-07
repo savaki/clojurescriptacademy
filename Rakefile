@@ -24,7 +24,15 @@ end
 
 namespace :deploy do
   desc 'deploy code to staging environment'
-  task :staging => %w(lein:compile sass:compile)
+  task :staging => %w(lein:compile sass:compile) do
+    run_command 'aws s3 cp --recursive --acl public-read public s3://clojurescriptacademy-staging'
+  end
+
+  desc 'deploy code to production environment'
+  task :production => %w(lein:compile sass:compile) do
+    run_command 'aws s3 cp --recursive --acl public-read public s3://clojurescriptacademy-production'
+  end
+
 end
 
 namespace :ci do
@@ -37,8 +45,11 @@ namespace :ci do
     end
   end
 
-  desc 'deploy the website via ci server'
+  desc 'deploy the website to staging via ci server'
   task :staging => %w(setup deploy:staging)
+
+  desc 'deploy the website to production via ci server'
+  task :production => %w(setup deploy:production)
 end
 
 def run_command(command)
