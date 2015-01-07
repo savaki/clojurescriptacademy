@@ -1,0 +1,12 @@
+# ignore intellij files
+/.idea
+/*.iml
+/*.iws
+/*.ipr
+
+# ignore generated files
+/public/dev
+/.lein-env
+/public/website.css
+/public/website.css.map
+/.sass-cache
