@@ -5,8 +5,9 @@
 /*.ipr
 
 # ignore generated files
-/public/dev
+/resources/public/index
 /.lein-env
-/public/website.css
-/public/website.css.map
+/resources/public/website.css
+/resources/public/website.css.map
 /.sass-cache
+/target

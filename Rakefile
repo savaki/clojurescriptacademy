@@ -1,58 +1,47 @@
+require 'erb'
+
+namespace :sass do
+  desc 'compiles the scss to css'
+  task :compile do
+    run_command 'mkdir -p target/styles'
+    run_command 'sass resources/styles/website.scss:target/styles/website.css '
+  end
+
+  desc 'automatically recompile on change to scss file(s)'
+  task :watch do
+    run_command 'mkdir -p resources/styles'
+    run_command 'sass --watch resources/styles/website.scss:resources/public/website.css'
+  end
+end
+
 namespace :lein do
   desc 'compiles the cljs to js'
   task :compile do
-    run_command './lein cljsbuild once dev'
+    run_command './lein cljsbuild once prod'
   end
 
-  desc 'automatically recompile on change to cljs files'
+  desc 'automatically recompile on change to cljs file(s)'
   task :watch do
     run_command './lein cljsbuild auto dev'
   end
 end
 
-namespace :sass do
-  desc 'compiles the scss to css'
-  task :compile do
-    run_command 'sass src/sass/website.scss:public/website.css'
-  end
-
-  desc 'automatically recompile on change to scss file(s)'
-  task :watch do
-    run_command 'sass --watch src/sass/website.scss:public/website.css'
+namespace :server do
+  desc 'starts the local development web server'
+  task :run do
+    run_command '(cd resources/public ; python -m SimpleHTTPServer)'
   end
 end
 
-namespace :deploy do
-  desc 'deploy code to staging environment'
-  task :staging => %w(lein:compile sass:compile) do
-    run_command 'aws s3 cp --recursive --acl public-read --cache-control max-age=90 public s3://clojurescriptacademy-staging'
+namespace :render do
+  desc 'pre-render the reagent pages'
+  task :pages => ['lein:compile', 'sass:compile'] do
+    run_command 'node bin/gen-site.js'
   end
-
-  desc 'deploy code to production environment'
-  task :production => %w(lein:compile sass:compile) do
-    run_command 'aws s3 cp --recursive --acl public-read --cache-control max-age=90 public s3://clojurescriptacademy-production'
-  end
-
-end
-
-namespace :ci do
-  desc 'install required tools'
-  task :setup do
-    begin
-      run_command 'which sass >& /dev/null'
-    rescue
-      run_command 'sudo gem install sass'
-    end
-  end
-
-  desc 'deploy the website to staging via ci server'
-  task :staging => %w(setup deploy:staging)
-
-  desc 'deploy the website to production via ci server'
-  task :production => %w(setup deploy:production)
 end
 
 def run_command(command)
   puts command
   system(command) || raise("unable to execute command - #{command}")
 end
+

@@ -1,29 +1,32 @@
-(defproject CHANGE-ME-ME "0.1.0-SNAPSHOT"
-  :description "CHANGE-ME"
-  :url "https://CHANGE-ME"
+(defproject website "0.1.0-SNAPSHOT"
+  :description "clojurescript academy website"
+  :url "https://clojurescriptacademy.com"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2665"]
+                 [cljs-ajax "0.3.4"]
+                 [com.facebook/react "0.12.2.1"]
                  [reagent "0.5.0-alpha"]
-                 [cljs-ajax "0.3.4"]]
+                 [secretary "1.2.1"]]
 
-  :plugins [[lein-environ "1.0.0"]
-            [lein-cljsbuild "1.0.4"]]
-
-  :preamble ["reagent/react.js"]
+  :plugins [[lein-cljsbuild "1.0.3"]]
 
   :cljsbuild {:builds [{:id "dev"
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src"]
                         :compiler {:optimizations :none
-                                   :output-to "public/dev/app.js"
-                                   :output-dir "public/dev/"
-                                   :pretty-print true
-                                   :source-map true}}
-                       {:id "prod"
-                        :source-paths ["src/cljs"]
-                        :compiler {:optimizations :advanced
-                                   :output-to "public/js/app.js"
-                                   :output-dir "public/js/"
+                                   :preamble ["react/react.min.js"]
+                                   :output-to "resources/public/index/app.js"
+                                   :output-dir "resources/public/index"
+                                   :source-map "resources/public/index/app.js.map"
                                    :pretty-print true}}
+                       {:id "prod"
+                        :source-paths ["src"]
+                        :compiler {:optimizations :advanced
+                                   :preamble ["react/react.min.js"]
+                                   :output-to "target/public/index/app.js"
+                                   :output-dir "target/public/index"
+                                   :source-map "target/public/index/app.js.map"
+                                   :pretty-print false}}
                        ]}
 
   :min-lein-version "2.0.0")
+
