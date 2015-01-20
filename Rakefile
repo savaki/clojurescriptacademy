@@ -54,7 +54,13 @@ namespace :deploy do
 
   desc 'deploy code to production environment'
   task :production => %w(render:pages) do
-    run_command 'aws s3 cp --recursive --acl public-read target/public s3://clojurescriptacademy-production'
+    run_command 'aws s3 cp --acl public-read --cache-control max-age=90 target/public s3://clojurescriptacademy-production'
+
+    run_command 'gzip target/public/index/app.js'
+    run_command 'aws s3 cp --acl public-read --cache-control max-age=90 --content-encoding gzip target/public/index/app.js.gz s3://clojurescriptacademy-production/index/app.js'
+
+    run_command 'gzip target/public/website.css'
+    run_command 'aws s3 cp --acl public-read --cache-control max-age=90 --content-encoding gzip target/public/website.css.gz s3://clojurescriptacademy-production/website.css'
   end
 end
 
