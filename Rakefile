@@ -1,14 +1,20 @@
 require 'erb'
 
 namespace :sass do
+  task :prepare do
+    unless Dir.exists? 'resources/styles/node_modules'
+      run_command '(cd resources/styles; npm install material-ui-sass)'
+    end
+  end
+
   desc 'compiles the scss to css'
-  task :compile do
+  task :compile => :prepare do
     run_command 'mkdir -p target/styles'
     run_command 'sass resources/styles/website.scss:target/styles/website.css '
   end
 
   desc 'automatically recompile on change to scss file(s)'
-  task :watch do
+  task :watch => :prepare do
     run_command 'mkdir -p resources/styles'
     run_command 'sass --watch resources/styles/website.scss:resources/public/website.css'
   end

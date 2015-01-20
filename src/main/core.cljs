@@ -1,12 +1,16 @@
 (ns main.core
   (:require [reagent.core :as reagent :refer [atom]]
+            [partials.header :as header]
+            [partials.footer :as footer]
             [pages.home :as home]
             [ajax.core :as ajax]))
 
 (enable-console-print!)
 
 (defn app-view []
-  [home/page])
+  [:div [header/page]
+   [home/page]
+   [footer/page]])
 
 ; guard access to js/document to allow offline rendering
 (try

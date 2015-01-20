@@ -11,3 +11,4 @@
 /resources/public/website.css.map
 /.sass-cache
 /target
+/resources/styles/node_modules
