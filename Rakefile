@@ -10,7 +10,7 @@ namespace :sass do
   desc 'compiles the scss to css'
   task :compile => :prepare do
     run_command 'mkdir -p target/styles'
-    run_command 'sass resources/styles/website.scss:target/styles/website.css '
+    run_command 'sass --style compact resources/styles/website.scss:target/styles/website.css '
   end
 
   desc 'automatically recompile on change to scss file(s)'
