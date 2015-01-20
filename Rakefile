@@ -46,6 +46,34 @@ namespace :render do
   end
 end
 
+namespace :deploy do
+  desc 'deploy code to staging environment'
+  task :staging => %w(render:pages) do
+    run_command 'aws s3 cp --recursive --acl public-read target/public s3://clojurescriptacademy-staging'
+  end
+
+  desc 'deploy code to production environment'
+  task :production => %w(render:pages) do
+    run_command 'aws s3 cp --recursive --acl public-read target/public s3://clojurescriptacademy-production'
+  end
+end
+
+namespace :ci do
+  task :setup do
+    begin
+      run_command 'which sass >& /dev/null'
+    rescue
+      run_command 'sudo gem install sass'
+    end
+  end
+
+  desc 'deploy the website to staging via ci server'
+  task :staging => %w(setup deploy:staging)
+
+  desc 'deploy the website to production via ci server'
+  task :production => %w(setup deploy:production)
+end
+
 def run_command(command)
   puts command
   system(command) || raise("unable to execute command - #{command}")
