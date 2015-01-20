@@ -8,11 +8,10 @@
   [:div.organization [:h1 "ClojureScript Academy"]])
 
 (defn navigation-view []
-  [:ul.navigation [:li [:a {:href "#"} "Lessons"]]])
+  [:ul.navigation])
 
 (defn search-view []
-  [:div.search [:form {:on-click #(println "hello world")} [:input {:type "text"
-                                                                    :placeholder "Search ..."}]]])
+  [:div.search])
 
 (defn page []
   [:div.header [:div.content [organization-view]

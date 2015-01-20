@@ -15,12 +15,12 @@
                        [hero-video-item "Getting started"]]])
 
 (defn hero-view []
-  [:div.hero [:div.content [:h1 "Learn ClojureScript and Reagent.Now."]
+  [:div.hero [:div.content [:h1 "Learn ClojureScript and Reagent. Now."]
               [:p "Five minutes can revolutionize how you do web development."]
               [hero-videos-view]]])
 
 (defn page []
   [:div [hero-view]
-   [:div.choose-a-series [:div.content [:h1 "Videos Coming Soon"]
+   [:div.choose-a-series [:div.content [:h1 "Moar Videos Coming Soon"]
                           [media/video-grid-view []]]]])
 
