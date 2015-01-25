@@ -192,7 +192,18 @@ EOF
 
   desc 'build the ami'
   task :build => :prepare do
-    run_command 'tmp/packer build packer.conf'
+    filename = 'tmp/output.log'
+    run_command "rm -f #{filename}"
+
+    # create the ami
+    run_command "#{packer} build -machine-readable packer.conf | tee -a #{filename}"
+
+    # parse the output file and extract the ami
+    ami = `grep 'artifact,0,id' #{filename} | awk -F: '{print $2}'`
+    ami = ami.gsub(/\s*/, '')
+    File.open('ami.txt', 'w') do |io|
+      io.puts ami
+    end
   end
 end
 
