@@ -197,8 +197,8 @@ EOF
 
   desc 'build the ami'
   task :build => :prepare do
-    filename = 'tmp/output.log'
-    run_command "rm -f #{filename}"
+    filename = 'tmp/build.log'
+    run_command "mkdir -p #{File.dirname filename}; rm -f #{filename}"
 
     # create the ami
     run_command "#{packer} build -machine-readable packer.conf | tee -a #{filename}"
@@ -247,7 +247,7 @@ EOF
   end
 
   desc 'stop all the other instances'
-  task :stop_other_instances do
+  task :terminate_other_instances do
     instances_to_delete = '/tmp/delete_instances.txt'
     run_command <<EOF
 rm -f #{instances_to_delete}
