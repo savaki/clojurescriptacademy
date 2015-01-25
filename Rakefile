@@ -1,6 +1,11 @@
 require 'erb'
 require 'rbconfig'
 
+desc 'delete temporary files'
+task :clean do
+  run_command 'rm -rf target'
+end
+
 namespace :sass do
   task :prepare do
     unless Dir.exists? 'resources/styles/node_modules'
@@ -121,7 +126,7 @@ namespace :packer do
   end
 
   desc 'generates the packer.conf file'
-  task :prepare => :download do
+  task :prepare => %w(download sass:compile lein:compile) do
 
     source_ami = 'ami-9eaa1cf6'
     security_group = 'sg-c94897ad'
@@ -151,7 +156,7 @@ namespace :packer do
       "type": "shell",
       "inline": [
         "sudo apt-get update",
-        "sudo apt-get install -y nodejs npm"
+        "sudo apt-get install -y nodejs npm curl awscli jq"
       ]
     },
     {
@@ -159,7 +164,7 @@ namespace :packer do
       "inline": [
         "sudo mkdir -p /app/target/public /app/bin",
         "sudo chown -R ubuntu:ubuntu /app",
-        "(cd /app ; npm install express)"
+        "(cd /app ; npm install express st)"
       ]
     },
     {
@@ -203,6 +208,54 @@ EOF
     ami = ami.gsub(/\s*/, '')
     File.open('ami.txt', 'w') do |io|
       io.puts ami
+    end
+  end
+end
+
+namespace :ec2 do
+  def ami_id
+    File.read('ami.txt').gsub(/\s*/, '')
+  end
+
+  desc 'start a instance'
+  task :start_instance do
+    filename = 'instance.log'
+    run_command "rm -f #{filename}"
+
+    ENV['AWS_DEFAULT_REGION'] = 'us-east-1'
+
+    security_group = 'sg-a97ea1cd'
+    instance_type = 't2.micro'
+    subnet = 'subnet-ab9004dc'
+    profile = 'Name=clojurescriptacademy'
+    key_name = 'us-east-1'
+
+    run_command <<EOF
+aws ec2 run-instances \
+  --image-id #{ami_id} \
+  --security-group-ids #{security_group} \
+  --instance-type #{instance_type} \
+  --subnet-id #{subnet} \
+  --iam-instance-profile #{profile} \
+  --associate-public-ip-address \
+  --key-name #{key_name} | jq -r .Instances[0].InstanceId > #{filename}
+EOF
+
+    # tag the instance
+    instance_id = File.read(filename).gsub(/\s*/, '')
+    run_command "aws ec2 create-tags --resources #{instance_id} --tags Key=hostname,Value=staging 'Key=Name,Value=ClojureScript Academy - staging'"
+  end
+
+  desc 'stop all the other instances'
+  task :stop_other_instances do
+    instances_to_delete = '/tmp/delete_instances.txt'
+    run_command <<EOF
+rm -f #{instances_to_delete}
+aws ec2 describe-instances | jq -r '.Reservations[].Instances[] | select(.State.Name=="running" and .SecurityGroups[].GroupName=="clojurescript-academy" and .ImageId != "#{ami_id}") | .InstanceId' > #{instances_to_delete}
+EOF
+
+    File.open(instances_to_delete).each_line do |instance_id|
+      run_command "aws ec2 terminate-instances --instance-ids #{instance_id}"
     end
   end
 end

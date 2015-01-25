@@ -2,6 +2,42 @@
 
 set -eu
 
+# -- 1. update route53 with our ip --------------------------------------
+
+export AWS_DEFAULT_REGION=$(curl http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)
+export INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
+export HOSTNAME=$(aws ec2 describe-tags --filters "Name=resource-id,Values=${INSTANCE_ID}" | jq -r '.Tags[] | select(.Key=="hostname") | .Value')
+export HOSTED_ZONE_ID=ZQX7PCYN28Z9B
+
+cat <<EOT > /tmp/change.json
+{
+  "Comment": "A new record set for the zone.",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "${HOSTNAME}.clojurescriptacademy.net.",
+        "Type": "A",
+        "TTL": 60,
+        "ResourceRecords": [
+          {
+            "Value": "$(curl http://169.254.169.254/latest/meta-data/public-ipv4)"
+          }
+        ]
+      }
+    }
+  ]
+}
+EOT
+
+# tell route53 what our ip address is
+aws route53 change-resource-record-sets \
+  --hosted-zone-id ${HOSTED_ZONE_ID} --change-batch \
+  file:///tmp/change.json
+
+
+# -- 2. start the app ---------------------------------------------------
+
 export PORT=80
 (cd /app; nodejs bin/server.js &)
 
