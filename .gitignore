@@ -7,8 +7,7 @@
 # ignore generated files
 /resources/public/index
 /.lein-env
-/resources/public/website.css
-/resources/public/website.css.map
+/resources/public/static
 /.sass-cache
 /target
 /resources/styles/node_modules
@@ -17,6 +16,7 @@
 # ignore downloaded files
 /bin/react-0.12.2.js
 /node_modules
+/tmp
 
 # ignore temporary files
 /*.env

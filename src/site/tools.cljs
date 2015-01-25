@@ -10,13 +10,16 @@
   [:html [:head [:meta {:charset "utf-8"}]
           [:meta {:name "viewport"
                   :content "width=device-width, initial-scale=1.0"}]
-          [:link {:href (str "/website.css?" timestamp)
+          [:link {:href (str "/static/styles/website.css?" timestamp)
                   :rel "stylesheet"}]]
-   [body]])
+   [:body [:div#app [body]]
+    [:script {:type "text/javascript"
+              :src "/static/scripts/app.js"}]]])
 
 (defn ^:export render-page [path timestamp]
   (secretary/dispatch! path)
-  (reagent/render-component-to-string (template {:title "title"
-                                                 :timestamp timestamp
-                                                 :body core/app-view})))
+  ;  (reagent/render-component-to-string (template {:title "title"
+  (reagent/render-to-static-markup (template {:title "title"
+                                              :timestamp timestamp
+                                              :body core/app-view})))
 

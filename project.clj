@@ -15,17 +15,17 @@
                         :source-paths ["src"]
                         :compiler {:optimizations :none
                                    :preamble ["react/react.min.js"]
-                                   :output-to "resources/public/index/app.js"
-                                   :output-dir "resources/public/index"
-                                   :source-map "resources/public/index/app.js.map"
+                                   :output-to "resources/public/static/scripts/app.js"
+                                   :output-dir "resources/public/static/scripts"
+                                   :source-map "resources/public/static/scripts/app.js.map"
                                    :pretty-print true}}
                        {:id "prod"
                         :source-paths ["src"]
                         :compiler {:optimizations :advanced
                                    :preamble ["react/react.min.js"]
-                                   :output-to "target/public/index/app.js"
-                                   :output-dir "target/public/index"
-                                   :source-map "target/public/index/app.js.map"
+                                   :output-to "target/public/static/scripts/app.js"
+                                   :output-dir "target/public/static/scripts"
+                                   :source-map "target/public/static/scripts/app.js.map"
                                    :pretty-print false}}
                        ]}
 

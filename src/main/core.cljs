@@ -32,9 +32,11 @@
   (fn [x] (when (secretary/locate-route x) x)))
 
 (defroute "/" []
+  (println "home page")
   (reset! current-page home/page))
 
 (defroute "/lessons/:lesson-name" [lesson-name query-params]
+  (println "lesson page - " lesson-name)
   (swap! app-state assoc :lesson-name lesson-name)
   (reset! current-page lesson/page))
 

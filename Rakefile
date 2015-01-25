@@ -1,4 +1,5 @@
 require 'erb'
+require 'rbconfig'
 
 namespace :sass do
   task :prepare do
@@ -9,25 +10,29 @@ namespace :sass do
 
   desc 'compiles the scss to css'
   task :compile => :prepare do
-    run_command 'mkdir -p target/styles'
-    run_command 'sass --style compact resources/styles/website.scss:target/styles/website.css '
+    run_command 'mkdir -p target/public/static/styles'
+    run_command 'sass --style compact resources/styles/website.scss:target/public/static/styles/website.css'
   end
 
   desc 'automatically recompile on change to scss file(s)'
   task :watch => :prepare do
-    run_command 'mkdir -p resources/styles'
-    run_command 'sass --watch resources/styles/website.scss:resources/public/website.css'
+    run_command 'mkdir -p resources/styles/static/styles'
+    run_command 'sass --watch resources/styles/website.scss:resources/public/static/styles/website.css'
   end
 end
 
 namespace :lein do
+  task :prepare do
+    run_command '(cd bin; wget http://fb.me/react-0.12.2.js)' unless File.exists?('bin/react-0.12.2.js')
+  end
+
   desc 'compiles the cljs to js'
-  task :compile do
+  task :compile => :prepare do
     run_command './lein cljsbuild once prod'
   end
 
   desc 'automatically recompile on change to cljs file(s)'
-  task :watch do
+  task :watch => :prepare do
     run_command './lein cljsbuild auto dev'
   end
 end
@@ -41,8 +46,7 @@ end
 
 namespace :render do
   desc 'pre-render the reagent pages'
-  task :pages => ['lein:compile', 'sass:compile'] do
-    run_command '(cd bin; wget http://fb.me/react-0.12.2.js)' unless File.exists?('bin/react-0.12.2.js')
+  task :pages => %w(lein:compile sass:compile) do
     run_command 'node bin/gen-site.js'
   end
 end
@@ -68,11 +72,11 @@ end
 namespace :node do
   desc 'compile all the files required by the node server'
   task :prepare => %w(lein:compile sass:compile) do
-    run_command 'node install express' unless Dir.exists?('node_modules')
+    run_command 'npm install express st' unless Dir.exists?('node_modules')
   end
 
   desc 'start the node server'
-  task :server =>  :prepare do
+  task :server => :prepare do
     run_command 'node bin/server.js'
   end
 end
@@ -94,8 +98,30 @@ namespace :ci do
 end
 
 namespace :packer do
+  def packer
+    'tmp/packer/packer'
+  end
+
+  desc 'download packer'
+  task :download do
+    host_os = RbConfig::CONFIG['host_os']
+    zip_file = case host_os
+                 when /darwin|mac os/
+                   'https://dl.bintray.com/mitchellh/packer/packer_0.7.5_darwin_amd64.zip'
+                 when /linux/
+                   'https://dl.bintray.com/mitchellh/packer/packer_0.7.5_linux_amd64.zip'
+                 else
+                   raise "unknown os: #{host_os.inspect}"
+               end
+
+    unless File.exists?(packer)
+      run_command "mkdir -p #{File.dirname packer}"
+      run_command "(cd #{File.dirname packer}; wget #{zip_file} ; unzip -U #{File.basename zip_file})"
+    end
+  end
+
   desc 'generates the packer.conf file'
-  task :prepare do
+  task :prepare => :download do
 
     source_ami = 'ami-9eaa1cf6'
     security_group = 'sg-c94897ad'

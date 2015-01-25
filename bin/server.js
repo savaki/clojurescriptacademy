@@ -21,7 +21,7 @@ global.document = {
 };
 
 // load the reagent app
-var srcFile = "target/public/index/app.js";
+var srcFile = "target/public/static/scripts/app.js";
 var cljsLoad = require("./cljs-load");
 cljsLoad.load(srcFile);
 
