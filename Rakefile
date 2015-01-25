@@ -72,7 +72,7 @@ end
 namespace :node do
   desc 'compile all the files required by the node server'
   task :prepare => %w(lein:compile sass:compile) do
-    run_command 'npm install express st' unless Dir.exists?('node_modules')
+    run_command 'npm install express st' unless Dir.exists?("#{ENV['HOME']}/node_modules")
   end
 
   desc 'start the node server'
