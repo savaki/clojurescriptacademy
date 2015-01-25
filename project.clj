@@ -5,6 +5,7 @@
                  [org.clojure/clojurescript "0.0-2665"]
                  [cljs-ajax "0.3.4"]
                  [com.facebook/react "0.12.2.1"]
+                 [kibu/pushy "0.2.2"]
                  [reagent "0.5.0-alpha"]
                  [secretary "1.2.1"]]
 

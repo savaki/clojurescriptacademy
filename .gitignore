@@ -12,3 +12,11 @@
 /.sass-cache
 /target
 /resources/styles/node_modules
+/packer.conf
+
+# ignore downloaded files
+/bin/react-0.12.2.js
+/node_modules
+
+# ignore temporary files
+/*.env

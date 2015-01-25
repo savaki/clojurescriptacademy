@@ -3,8 +3,7 @@
             [ajax.core :as ajax]))
 
 (defn video-grid-item-view [video]
-  [:div video])
+  [:a.video {:href "/lessons/first-thingie"} video])
 
 (defn video-grid-view [videos]
-  [:div
-   (for [video videos] [video-grid-item-view video])])
+  [:div.video-grid (for [video videos] [video-grid-item-view video])])

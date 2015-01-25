@@ -1,13 +1,11 @@
-(ns pages.home
+(ns pages.lesson
   (:require [reagent.core :as reagent :refer [atom]]
             [analytics :as analytics]
             [partials.media :as media]
             [ajax.core :as ajax]))
 
-(enable-console-print!)
-
-(defn hero-video-item [{:keys [label video path]}]
-  [:td.hero-video [:a {:href "/lessons/do-something-with-something" :on-click #(println "render video")} [:span.label label]]])
+(defn hero-video-item [video]
+  [:td.hero-video [:a [:span.label video]]])
 
 (defn hero-videos-view []
   [:table.hero-videos [:tr [hero-video-item "thirty second video"]
@@ -20,7 +18,5 @@
               [hero-videos-view]]])
 
 (defn page []
-  [:div [hero-view]
-   [:div.choose-a-series [:div.content [media/video-grid-view ["Video #1"]]
-                          [:h1 "Moar Videos Coming Soon"]]]])
+  [:div "this is the lesson page"])
 

@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+set -eu
+
+export PORT=80
+(cd /app; nodejs bin/server.js &)
+
+exit 0

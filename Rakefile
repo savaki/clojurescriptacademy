@@ -42,6 +42,7 @@ end
 namespace :render do
   desc 'pre-render the reagent pages'
   task :pages => ['lein:compile', 'sass:compile'] do
+    run_command '(cd bin; wget http://fb.me/react-0.12.2.js)' unless File.exists?('bin/react-0.12.2.js')
     run_command 'node bin/gen-site.js'
   end
 end
@@ -64,6 +65,18 @@ namespace :deploy do
   end
 end
 
+namespace :node do
+  desc 'compile all the files required by the node server'
+  task :prepare => %w(lein:compile sass:compile) do
+    run_command 'node install express' unless Dir.exists?('node_modules')
+  end
+
+  desc 'start the node server'
+  task :server =>  :prepare do
+    run_command 'node bin/server.js'
+  end
+end
+
 namespace :ci do
   task :setup do
     begin
@@ -78,6 +91,83 @@ namespace :ci do
 
   desc 'deploy the website to production via ci server'
   task :production => %w(setup deploy:production)
+end
+
+namespace :packer do
+  desc 'generates the packer.conf file'
+  task :prepare do
+
+    source_ami = 'ami-9eaa1cf6'
+    security_group = 'sg-c94897ad'
+    subnet = 'subnet-ab9004dc'
+
+    # "ssh_private_key_file": "/Users/matt/.ssh/id_packer",
+    # "temporary_key_pair_name": "packer",
+    File.open('packer.conf', 'w') do |io|
+      io.puts <<EOF
+{
+  "builders": [
+    {
+      "ami_name": "clojurescriptacademy {{timestamp}}",
+      "associate_public_ip_address": true,
+      "instance_type": "t2.micro",
+      "region": "us-east-1",
+      "security_group_id": "#{security_group}",
+      "source_ami": "#{source_ami}",
+      "ssh_username": "ubuntu",
+      "subnet_id": "#{subnet}",
+      "type": "amazon-ebs"
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo apt-get update",
+        "sudo apt-get install -y nodejs npm"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo mkdir -p /app/target/public /app/bin",
+        "sudo chown -R ubuntu:ubuntu /app",
+        "(cd /app ; npm install express)"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "bin/",
+      "destination": "/app/bin"
+    },
+    {
+      "type": "file",
+      "source": "target/public/",
+      "destination": "/app/target/public"
+    },
+    {
+      "type": "file",
+      "source": "resources/infra/rc.local",
+      "destination": "/tmp/rc.local"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo mv /tmp/rc.local /etc/rc.local",
+        "sudo chmod +x /etc/rc.local"
+      ]
+    }
+  ]
+}
+EOF
+    end
+  end
+
+  desc 'build the ami'
+  task :build => :prepare do
+    run_command 'tmp/packer build packer.conf'
+  end
 end
 
 def run_command(command)

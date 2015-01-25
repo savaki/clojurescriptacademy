@@ -108,3 +108,17 @@ h1 {
     text-align: center;
   }
 }
+
+.video-grid {
+  .video {
+    height: 300px;
+    width: 300px;
+    background-color: #f0f0f0;
+    border: 1px solid #c0c0c0;
+    box-sizing: border-box;
+    padding: 25px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+}
