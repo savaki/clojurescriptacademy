@@ -23,9 +23,9 @@
                         :source-paths ["src/cljs" "src/cljs-client"]
                         :compiler {:optimizations :advanced
                                    :preamble ["react/react.min.js"]
-                                   :output-to "target/prod/scripts/app.js"
-                                   :output-dir "target/prod/scripts"
-                                   :source-map "target/prod/scripts/app.js.map"
+                                   :output-to "target/public/scripts/app.js"
+                                   :output-dir "target/public/scripts"
+                                   :source-map "target/public/scripts/app.js.map"
                                    :pretty-print false}}
                        {:id "server"
                         :source-paths ["src/cljs"]

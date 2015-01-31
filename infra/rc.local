@@ -39,6 +39,7 @@ aws route53 change-resource-record-sets \
 # -- 2. start the app ---------------------------------------------------
 
 export PORT=80
-(cd /app; nodejs bin/server.js &)
+export DOCROOT=/app/public
+(cd /app/server; nodejs ./server.js &)
 
 exit 0

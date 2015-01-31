@@ -39,7 +39,7 @@ var app = express();
 var render_page = site.tools.render_page;
 
 var timestamp = Math.round(new Date() / 1000);
-var advanced_mode = process.env.ADVANCED_MODE || false;
+var advanced_mode = process.env.ADVANCED_MODE;
 
 app.get('/', function (req, res) {
     res.send(render_page(req.path, timestamp, advanced_mode));

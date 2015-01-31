@@ -14,7 +14,7 @@
 (def current-page (atom home/page))
 
 (defn app-view []
-  [:div "hello world"
+  [:div 
    [header/page]
    [@current-page]
    [footer/page]])

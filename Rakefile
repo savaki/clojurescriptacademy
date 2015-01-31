@@ -17,8 +17,8 @@ namespace :sass do
 
   desc 'compiles the scss to css'
   task :compile => :prepare do
-    run_command 'mkdir -p target/public/static/styles'
-    run_command 'sass --style compact resources/styles/website.scss:target/public/static/styles/website.css'
+    run_command 'mkdir -p target/public/styles'
+    run_command 'sass --style compact resources/styles/website.scss:target/public/styles/website.css'
   end
 
   desc 'automatically recompile on change to scss file(s)'
@@ -30,12 +30,12 @@ end
 
 namespace :lein do
   desc 'automatically compiles cljs -> js when files change'
-  task :dev do
+  task :watch do
     run_command 'infra/lein cljsbuild auto dev server'
   end
 
   desc 'compiles cljs -> js'
-  task :prod do
+  task :compile do
     run_command 'infra/lein cljsbuild once prod server'
   end
 end
@@ -68,24 +68,6 @@ namespace :node do
   desc 'do something'
   task :server => :prepare do
     run_command "(cd #{basedir} ; #{NODE} ./server.js)"
-  end
-end
-
-namespace :deploy do
-  desc 'deploy code to staging environment'
-  task :staging => %w(render:pages) do
-    run_command 'aws s3 cp --recursive --acl public-read target/public s3://clojurescriptacademy-staging'
-  end
-
-  desc 'deploy code to production environment'
-  task :production => %w(render:pages) do
-    run_command 'aws s3 cp --recursive --acl public-read --cache-control max-age=90 target/public s3://clojurescriptacademy-production'
-
-    run_command 'gzip target/public/index/app.js'
-    run_command 'aws s3 cp --acl public-read --cache-control max-age=90 --content-encoding gzip target/public/index/app.js.gz s3://clojurescriptacademy-production/index/app.js'
-
-    run_command 'gzip target/public/website.css'
-    run_command 'aws s3 cp --acl public-read --cache-control max-age=90 --content-encoding gzip target/public/website.css.gz s3://clojurescriptacademy-production/website.css'
   end
 end
 
@@ -129,7 +111,7 @@ namespace :packer do
   end
 
   desc 'generates the packer.conf file'
-  task :prepare => %w(download sass:compile lein:compile) do
+  task :prepare => %w(download sass:compile lein:compile node:prepare) do
 
     source_ami = 'ami-9eaa1cf6'
     security_group = 'sg-c94897ad'
@@ -172,13 +154,8 @@ namespace :packer do
     },
     {
       "type": "file",
-      "source": "bin/",
-      "destination": "/app/bin"
-    },
-    {
-      "type": "file",
-      "source": "target/public/",
-      "destination": "/app/target/public"
+      "source": "target",
+      "destination": "/app/target"
     },
     {
       "type": "file",

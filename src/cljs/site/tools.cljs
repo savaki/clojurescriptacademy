@@ -13,12 +13,12 @@
           [:link {:href (str "/styles/website.css?" timestamp)
                   :rel "stylesheet"}]]
    [:body [:div#app [body]]
-    (when (not advanced-mode)
+    (when (nil? advanced-mode)
       [:script {:type "text/javascript" :src "//fb.me/react-0.12.2.min.js"}])
-    (when (not advanced-mode)
+    (when (nil? advanced-mode)
       [:script {:type "text/javascript" :src "/scripts/goog/base.js"}])
     [:script {:type "text/javascript" :src "/scripts/app.js"}]
-    (when (not advanced-mode)
+    (when (nil? advanced-mode)
       [:script {:type "text/javascript"
                 :dangerouslySetInnerHTML {:__html "goog.require('main.core');"}}])
     ]])
