@@ -5,17 +5,12 @@
 /*.ipr
 
 # ignore generated files
-/resources/public/index
 /.lein-env
-/resources/public/static
 /.sass-cache
 /target
-/resources/styles/node_modules
 /packer.conf
 
 # ignore downloaded files
-/bin/react-0.12.2.js
-/node_modules
 /tmp
 
 # ignore temporary files
