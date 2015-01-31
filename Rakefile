@@ -50,7 +50,7 @@ namespace :node do
     run_command "cp infra/server.js #{basedir}/server.js"
 
     # install express, st
-    # run_command "(cd #{basedir}; npm install express st --save)" unless Dir.exists?("../.. /node_modules")
+    run_command "(cd #{basedir}; npm install express st --save)" unless Dir.exists?("../.. /node_modules")
 
     # download the closure nodejs bootstrap
     filename = "#{basedir}/goog/bootstrap/nodejs.js"

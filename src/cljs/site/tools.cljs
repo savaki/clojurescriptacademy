@@ -1,7 +1,7 @@
 (ns site.tools
   (:require [reagent.core :as reagent :refer [atom]]
             [secretary.core :as secretary :refer-macros [defroute]]
-            [main.core :as core]
+            [main.routes :as routes]
             [ajax.core :as ajax]))
 
 (enable-console-print!)
@@ -13,13 +13,16 @@
           [:link {:href (str "/styles/website.css?" timestamp)
                   :rel "stylesheet"}]]
    [:body [:div#app [body]]
+    [:script {:type "text/javascript" :src "//fb.me/react-0.12.2.min.js"}]
+    [:script {:type "text/javascript" :src "/scripts/goog/base.js"}]
+    [:script {:type "text/javascript" :src "/scripts/app.js"}]
     [:script {:type "text/javascript"
-              :src "/scripts/app.js"}]]])
+              :dangerouslySetInnerHTML {:__html "goog.require('main.core');"}}]
+    ]])
 
 (defn ^:export render-page [path timestamp]
   (secretary/dispatch! path)
-  ;  (reagent/render-component-to-string (template {:title "title"
   (reagent/render-to-static-markup (template {:title "title"
                                               :timestamp timestamp
-                                              :body core/app-view})))
+                                              :body routes/app-view})))
 

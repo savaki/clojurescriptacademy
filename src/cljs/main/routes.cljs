@@ -1,8 +1,6 @@
-(ns main.core
+(ns main.routes
   (:require [reagent.core :as reagent :refer [atom]]
             [secretary.core :as secretary :refer-macros [defroute]]
-;            [pushy.core :as pushy :refer [push-state!]]
-            [ajax.core :as ajax]
 
             [partials.header :as header]
             [partials.footer :as footer]
@@ -16,22 +14,14 @@
 (def current-page (atom home/page))
 
 (defn app-view []
-  [:div
+  [:div "hello world"
    [header/page]
    [@current-page]
    [footer/page]])
 
-; guard access to js/document to allow offline rendering
-(try
-  (reagent/render-component [app-view] (.getElementById js/document "app"))
-  (catch :default e e))
-
 ;----------------------------------------------------------------------
 
 (secretary/set-config! :prefix "/")
-
-;(push-state! secretary/dispatch!
-;  (fn [x] (when (secretary/locate-route x) x)))
 
 (defroute "/" []
   (println "home page")

@@ -12,7 +12,7 @@
   :plugins [[lein-cljsbuild "1.0.3"]]
 
   :cljsbuild {:builds [{:id "dev"
-                        :source-paths ["src"]
+                        :source-paths ["src/cljs" "src/cljs-client"]
                         :compiler {:optimizations :none
                                    :preamble ["react/react.min.js"]
                                    :output-to "target/dev/scripts/app.js"
@@ -20,7 +20,7 @@
                                    :source-map "target/dev/scripts/app.js.map"
                                    :pretty-print true}}
                        {:id "prod"
-                        :source-paths ["src"]
+                        :source-paths ["src/cljs" "src/cljs-client"]
                         :compiler {:optimizations :advanced
                                    :preamble ["react/react.min.js"]
                                    :output-to "target/prod/scripts/app.js"
@@ -28,7 +28,7 @@
                                    :source-map "target/prod/scripts/app.js.map"
                                    :pretty-print false}}
                        {:id "server"
-                        :source-paths ["src"]
+                        :source-paths ["src/cljs"]
                         :compiler {:optimizations :none
                                    :output-to "target/server/app.js"
                                    :output-dir "target/server"

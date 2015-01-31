@@ -1,35 +1,39 @@
 // ----------------------------------------------------------------------
+// fake required browser elements
+
+global.React = require("./react.js");
+global.window = {
+    attachEvent: function (eventName, callback) {
+        return {
+            pathname: "/"
+        };
+    },
+    location: {
+        pathname: "/"
+    },
+    Html5History: {
+        isSupported: function(options) {
+            return true;
+        }
+    }
+};
+global.document = {
+    attachEvent: function (eventName, callback) {
+        return {
+            pathname: "/"
+        };
+    },
+    location: {
+        pathname: "/"
+    }
+};
+
+// ----------------------------------------------------------------------
 // load the reagent app
 
 require('./goog/bootstrap/nodejs');
 require('./app');
 goog.require('site.tools');
-
-// ----------------------------------------------------------------------
-// fake required browser elements
-
-React = require("./react.js");
-var window = {
-    attachEvent: function (eventName, callback) {
-        return {
-            pathname: "/"
-        };
-    },
-    location: {
-        pathname: "/"
-    }
-};
-var document = {
-    attachEvent: function (eventName, callback) {
-        return {
-            pathname: "/"
-        };
-    },
-    location: {
-        pathname: "/"
-    }
-};
-
 
 // ----------------------------------------------------------------------
 // load the express framework
