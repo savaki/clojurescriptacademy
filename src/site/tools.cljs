@@ -10,11 +10,11 @@
   [:html [:head [:meta {:charset "utf-8"}]
           [:meta {:name "viewport"
                   :content "width=device-width, initial-scale=1.0"}]
-          [:link {:href (str "/static/styles/website.css?" timestamp)
+          [:link {:href (str "/styles/website.css?" timestamp)
                   :rel "stylesheet"}]]
    [:body [:div#app [body]]
     [:script {:type "text/javascript"
-              :src "/static/scripts/app.js"}]]])
+              :src "/scripts/app.js"}]]])
 
 (defn ^:export render-page [path timestamp]
   (secretary/dispatch! path)

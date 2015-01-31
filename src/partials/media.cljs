@@ -6,4 +6,5 @@
   [:a.video {:href "/lessons/first-thingie"} video])
 
 (defn video-grid-view [videos]
-  [:div.video-grid (for [video videos] [video-grid-item-view video])])
+  [:div.video-grid (for [video videos]
+                     ^{:key video} [video-grid-item-view video])])

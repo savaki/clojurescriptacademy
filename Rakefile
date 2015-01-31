@@ -1,3 +1,5 @@
+NODE = ENV['NODE'] || 'nodemon'
+
 require 'erb'
 require 'rbconfig'
 
@@ -21,38 +23,51 @@ namespace :sass do
 
   desc 'automatically recompile on change to scss file(s)'
   task :watch => :prepare do
-    run_command 'mkdir -p resources/styles/static/styles'
-    run_command 'sass --watch resources/styles/website.scss:resources/public/static/styles/website.css'
+    run_command 'mkdir -p target/dev/styles'
+    run_command 'sass --watch resources/styles/website.scss:target/dev/styles/website.css'
   end
 end
 
 namespace :lein do
+  desc 'automatically compiles cljs -> js when files change'
+  task :dev do
+    run_command 'infra/lein cljsbuild auto dev server'
+  end
+
+  desc 'compiles cljs -> js'
+  task :prod do
+    run_command 'infra/lein cljsbuild once prod server'
+  end
+end
+
+namespace :node do
+  closure_bootstrap = 'https://raw.githubusercontent.com/google/closure-library/master/closure/goog/bootstrap/nodejs.js'
+  basedir = 'target/server'
+
+  desc 'prepares the server directory'
   task :prepare do
-    run_command '(cd bin; wget http://fb.me/react-0.12.2.js)' unless File.exists?('bin/react-0.12.2.js')
+    # install the server
+    run_command "cp infra/server.js #{basedir}/server.js"
+
+    # install express, st
+    # run_command "(cd #{basedir}; npm install express st --save)" unless Dir.exists?("../.. /node_modules")
+
+    # download the closure nodejs bootstrap
+    filename = "#{basedir}/goog/bootstrap/nodejs.js"
+    unless File.exists? filename
+      run_command "mkdir -p #{File.dirname filename}"
+      run_command "(cd #{File.dirname filename}; curl -s -o #{File.basename filename} #{closure_bootstrap})"
+    end
+
+    # download react
+    unless File.exists? "#{basedir}/react.js"
+      run_command "curl -L -s -o #{basedir}/react.js http://fb.me/react-0.12.2.js"
+    end
   end
 
-  desc 'compiles the cljs to js'
-  task :compile => :prepare do
-    run_command './lein cljsbuild once prod'
-  end
-
-  desc 'automatically recompile on change to cljs file(s)'
-  task :watch => :prepare do
-    run_command './lein cljsbuild auto dev'
-  end
-end
-
-namespace :server do
-  desc 'starts the local development web server'
-  task :run do
-    run_command '(cd resources/public ; python -m SimpleHTTPServer)'
-  end
-end
-
-namespace :render do
-  desc 'pre-render the reagent pages'
-  task :pages => %w(lein:compile sass:compile) do
-    run_command 'node bin/gen-site.js'
+  desc 'do something'
+  task :server => :prepare do
+    run_command "(cd #{basedir} ; #{NODE} ./server.js)"
   end
 end
 
@@ -71,18 +86,6 @@ namespace :deploy do
 
     run_command 'gzip target/public/website.css'
     run_command 'aws s3 cp --acl public-read --cache-control max-age=90 --content-encoding gzip target/public/website.css.gz s3://clojurescriptacademy-production/website.css'
-  end
-end
-
-namespace :node do
-  desc 'compile all the files required by the node server'
-  task :prepare => %w(lein:compile sass:compile) do
-    run_command 'npm install express st' unless Dir.exists?("#{ENV['HOME']}/node_modules")
-  end
-
-  desc 'start the node server'
-  task :server => :prepare do
-    run_command 'node bin/server.js'
   end
 end
 

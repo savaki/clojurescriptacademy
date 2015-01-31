@@ -15,18 +15,24 @@
                         :source-paths ["src"]
                         :compiler {:optimizations :none
                                    :preamble ["react/react.min.js"]
-                                   :output-to "resources/public/static/scripts/app.js"
-                                   :output-dir "resources/public/static/scripts"
-                                   :source-map "resources/public/static/scripts/app.js.map"
+                                   :output-to "target/dev/scripts/app.js"
+                                   :output-dir "target/dev/scripts"
+                                   :source-map "target/dev/scripts/app.js.map"
                                    :pretty-print true}}
                        {:id "prod"
                         :source-paths ["src"]
                         :compiler {:optimizations :advanced
                                    :preamble ["react/react.min.js"]
-                                   :output-to "target/public/static/scripts/app.js"
-                                   :output-dir "target/public/static/scripts"
-                                   :source-map "target/public/static/scripts/app.js.map"
+                                   :output-to "target/prod/scripts/app.js"
+                                   :output-dir "target/prod/scripts"
+                                   :source-map "target/prod/scripts/app.js.map"
                                    :pretty-print false}}
+                       {:id "server"
+                        :source-paths ["src"]
+                        :compiler {:optimizations :none
+                                   :output-to "target/server/app.js"
+                                   :output-dir "target/server"
+                                   :pretty-print true}}
                        ]}
 
   :min-lein-version "2.0.0")

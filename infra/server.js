@@ -1,53 +1,59 @@
-global.React = require("./react-0.12.2.js");
-global.window = {
-    attachEvent: function (eventName, callback) {
-        return {
-            pathname: "/"
-        };
-    },
-    location: {
-        pathname: "/"
-    }
-};
-global.document = {
-    attachEvent: function (eventName, callback) {
-        return {
-            pathname: "/"
-        };
-    },
-    location: {
-        pathname: "/"
-    }
-};
-
+// ----------------------------------------------------------------------
 // load the reagent app
-var srcFile = "target/public/static/scripts/app.js";
-var cljsLoad = require("./cljs-load");
-cljsLoad.load(srcFile);
+
+require('./goog/bootstrap/nodejs');
+require('./app');
+goog.require('site.tools');
 
 // ----------------------------------------------------------------------
+// fake required browser elements
 
+React = require("./react.js");
+var window = {
+    attachEvent: function (eventName, callback) {
+        return {
+            pathname: "/"
+        };
+    },
+    location: {
+        pathname: "/"
+    }
+};
+var document = {
+    attachEvent: function (eventName, callback) {
+        return {
+            pathname: "/"
+        };
+    },
+    location: {
+        pathname: "/"
+    }
+};
+
+
+// ----------------------------------------------------------------------
 // load the express framework
-var express = require('express'),
-    st = require('st'),
-    path = require('path');
 
+var express = require('express');
+var st = require('st');
 var app = express();
-var timestamp = new Date().getMilliseconds().toString();
 var render_page = site.tools.render_page;
 
 app.get('/', function (req, res) {
-    res.send(render_page(req.path, timestamp));
+    res.send(render_page(req.path));
 });
 
 app.get('/lessons/*', function (req, res) {
-    res.send(render_page(req.path, timestamp));
+    res.send(render_page(req.path));
 });
 
 var docroot = process.env.DOCROOT || '../dev';
 var mount = st({path: docroot, url: '/'});
 app.use(mount);
 
+// ----------------------------------------------------------------------
+// start the server
 
-var port = process.env.PORT || "3000";
-app.listen(parseInt(port));
+port = process.env.PORT || 3000;
+app.listen(port);
+

@@ -1,7 +1,7 @@
 (ns main.core
   (:require [reagent.core :as reagent :refer [atom]]
             [secretary.core :as secretary :refer-macros [defroute]]
-            [pushy.core :as pushy :refer [push-state!]]
+;            [pushy.core :as pushy :refer [push-state!]]
             [ajax.core :as ajax]
 
             [partials.header :as header]
@@ -16,7 +16,8 @@
 (def current-page (atom home/page))
 
 (defn app-view []
-  [:div [header/page]
+  [:div
+   [header/page]
    [@current-page]
    [footer/page]])
 
@@ -28,8 +29,9 @@
 ;----------------------------------------------------------------------
 
 (secretary/set-config! :prefix "/")
-(push-state! secretary/dispatch!
-  (fn [x] (when (secretary/locate-route x) x)))
+
+;(push-state! secretary/dispatch!
+;  (fn [x] (when (secretary/locate-route x) x)))
 
 (defroute "/" []
   (println "home page")
