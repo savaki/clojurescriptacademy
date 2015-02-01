@@ -147,19 +147,18 @@ namespace :packer do
     {
       "type": "shell",
       "inline": [
-        "sudo mkdir -p /app/target/public /app/bin",
-        "sudo chown -R ubuntu:ubuntu /app",
-        "(cd /app ; npm install express st)"
+        "sudo mkdir -p /app",
+        "sudo chown -R ubuntu:ubuntu /app"
       ]
     },
     {
       "type": "file",
-      "source": "target",
-      "destination": "/app/target"
+      "source": "target/",
+      "destination": "/app"
     },
     {
       "type": "file",
-      "source": "resources/infra/rc.local",
+      "source": "infra/rc.local",
       "destination": "/tmp/rc.local"
     },
     {
